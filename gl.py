@@ -387,15 +387,48 @@ class Bitmap(object):
                     tv2 = face[1][1] - 1
                     tv3 = face[2][1] - 1
                     
-                    tvA = self.glTransform(model.tex_coords[tv1],translate,scale)
-                    tvB = self.glTransform(model.tex_coords[tv2],translate,scale)
-                    tvC = self.glTransform(model.tex_coords[tv3],translate,scale)
+                    tvA = V2(*model.tex_coords[tv1])
+                    tvB = V2(*model.tex_coords[tv2])
+                    tvC = V2(*model.tex_coords[tv3])
 
                     self.triangle(a,b,c, texture = texture, tex_coords = (tvA, tvB, tvC), intensity = intensity)
                 
                 else:
                     self.triangle(a,b,c, color = self.glColor(intensity, intensity, intensity))
     
+    def glLoadTexture(self, file_name, translate=(0, 0), scale=(1, 1)):
+        '''Load Texture from BMP file'''
+        model = ObjReader(file_name)
+        model.readLines()
+
+        for face in model.faces:
+            vertices_ctr = len(face)
+            if vertices_ctr == 3:
+
+                tv1 = face[0][1] - 1
+                tv2 = face[1][1] - 1
+                tv3 = face[2][1] - 1
+
+                tvA = V2(*model.tex_coords[tv1])
+                tvB = V2(*model.tex_coords[tv2])
+                tvC = V2(*model.tex_coords[tv3])
+                
+                tvAx, tvAy = tvA.x,tvA.y
+                tvBx, tvBy = tvB.x,tvB.y
+                tvCx, tvCy = tvC.x,tvC.y
+                
+                tvAx = (tvAx * 2) - 1
+                tvAy = (tvAy * 2) - 1
+                tvBx = (tvBx * 2) - 1
+                tvBy = (tvBy * 2) - 1
+                tvCx = (tvCx * 2) - 1
+                tvCy = (tvCy * 2) - 1
+                
+                self.glLine(tvAx, tvAy,tvBx, tvBy)
+                self.glLine(tvBx, tvBy,tvCx, tvCy)
+                self.glLine(tvCx, tvCy,tvAx, tvAy)
+
+
     def glWrite(self, file_name):
         '''Write Bitmap File'''
         

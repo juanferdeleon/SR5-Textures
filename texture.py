@@ -17,7 +17,7 @@ class Texture(object):
     
     def __init__(self, path):
         self.path = path
-        self.read()
+        self.readTexture()
     
     def readTexture(self):
         '''Read BMP file, extract the header and pixel values'''
@@ -34,7 +34,7 @@ class Texture(object):
         img.seek(header_size)
 
         for y in range(self.height):
-            self.pixel.append([])
+            self.pixels.append([])
             for x in range(self.width):
                 b = ord(img.read(1))
                 g = ord(img.read(1))
@@ -46,13 +46,26 @@ class Texture(object):
     def get_color(self, tx, ty, intensity = 1):
         '''Get the color of each pixel from BMP file'''
         
-        x = int(tx)
-        y = int(ty)
+        x = int(tx * self.width)
+        y = int(ty * self.height)
 
-        #Return the color in bytes
-        return bytes(
-            map(
-                lambda b: round(b * intensity) if b * intensity > 0 else 0,
-                self.pixels[y][x]
+        try:
+            #Return the color in bytes
+            return bytes(
+                map(
+                    lambda b: round(b * intensity) if b * intensity > 0 else 0,
+                    self.pixels[y][x]
+                )
             )
-        )
+        except IndexError:
+            return bytes(
+                map(
+                    lambda t: int(round(t*intensity)) if (t * intensity) > 0 else 0,
+                    self.pixelesBuffer[y-1][x-1]
+                )
+            )
+    
+    def getDimensions(self):
+        '''Get height and width of BMP'''
+
+        return self.height, self.width

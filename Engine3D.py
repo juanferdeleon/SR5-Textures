@@ -10,6 +10,7 @@ Engine 3D
 '''
 
 from gl import Bitmap
+from texture import Texture
 
 bmp = Bitmap(1000, 1000)
 
@@ -29,7 +30,9 @@ if __name__ == '__main__':
     #Set pixel Colors
     bmp.glColor(1, 1, 1)
 
-    bmp.glLoadObjModel('face.obj')
+    fur = Texture("Textura1.bmp")
+
+    bmp.glLoadObjModel('cat.obj', texture = fur)
     
     #Output BMP
     bmp.glWrite("test.bmp")
